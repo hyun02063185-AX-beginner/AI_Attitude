@@ -21,11 +21,12 @@ AI에게 일을 맡기기 전에 사람이 먼저 세워야 할 기준을, 네 �
 
 ## 배포
 
-GitHub Pages에서 `main` 브랜치의 루트 디렉터리를 배포 대상으로 설정합니다. 배포 전 공개 경계 점검과 브라우저 검증을 완료합니다.
+GitHub Pages(`main` 브랜치 루트)로 배포됩니다.
+
+**공개 URL:** https://hyun02063185-ax-beginner.github.io/AI_Attitude/
 
 ## 다음 단계
 
 - `assets/lessons/lesson-01.webp` ~ `lesson-12.webp` 신규 이미지 추가
 - 이미지 교체 후 대체 텍스트와 비율 검토
-- 시각적 마감 및 GitHub Pages 배포
-- MyPage 연결(P1-2)
+- MyPage 연결 (P1-2)
