@@ -44,7 +44,7 @@ const App = (() => {
     window.addEventListener('hashchange', render);
     window.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && isRoute('lesson') && currentBox) setRoute(`#/box/${currentBox.id}`);
-      if (event.key === 'Escape' && isRoute('box')) setRoute('#/room');
+      else if (event.key === 'Escape' && isRoute('box')) setRoute('#/room');
     });
     let touchStart = null;
     document.addEventListener('touchstart', (event) => { touchStart = event.changedTouches[0]?.clientX; }, { passive: true });
