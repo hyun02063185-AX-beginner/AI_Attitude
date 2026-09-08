@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI에게 일을 맡기기 전에, 우리가 먼저 가져야 할 기준을 네 개의 방에서 살펴보는 공개 웹 콘텐츠입니다.">
+  <meta name="theme-color" content="#17130f">
+  <title>AI를 대하는 태도</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="ambient ambient--one" aria-hidden="true"></div>
+  <div class="ambient ambient--two" aria-hidden="true"></div>
+  <main id="app" tabindex="-1">
+    <section id="start-view" class="view view--start" aria-labelledby="start-title">
+      <div class="start__frame">
+        <p class="eyebrow">A QUIET EXHIBITION · 12 CARDS</p>
+        <div class="start__light" aria-hidden="true"></div>
+        <h1 id="start-title">AI를<br>대하는 태도</h1>
+        <p class="start__lead">AI에게 일을 맡기기 전에, 우리가 먼저 가져야 할 기준을<br class="desktop-only"> 네 개의 방에서 천천히 살펴봅니다.</p>
+        <button class="button button--enter" id="enter-button" type="button">
+          <span>관점의 방으로 들어가기</span><span aria-hidden="true">→</span>
+        </button>
+        <p class="start__note">12개의 카드 · 이어보기 지원</p>
+      </div>
+    </section>
+
+    <section id="room-view" class="view" hidden aria-labelledby="room-title">
+      <header class="topbar">
+        <button class="text-button" type="button" data-route="#/" aria-label="입장 화면으로 돌아가기">⌂ 처음</button>
+        <div><p class="topbar__eyebrow">AI를 대하는 태도</p><h2 id="room-title">관점의 방</h2></div>
+        <button class="progress-button" type="button" data-route="#/room" aria-label="본 카드 수 확인"><span id="progress-count">0</span><span aria-hidden="true"> / 12</span><span class="progress-button__label"> 본 카드</span></button>
+      </header>
+      <div class="room-intro"><p class="eyebrow">FOUR ROOMS</p><p>한 번에 답을 찾기보다, 기준을 하나씩 꺼내 봅니다.</p></div>
+      <div id="room-grid" class="room-grid" aria-label="네 개의 관점의 방"></div>
+      <p class="room-footnote">방을 열면 세 장의 카드를 볼 수 있습니다.</p>
+    </section>
+
+    <section id="cards-view" class="view" hidden aria-labelledby="cards-title">
+      <header class="topbar">
+        <button class="text-button" type="button" data-route="#/room">← 관점의 방</button>
+        <div><p class="topbar__eyebrow" id="cards-eyebrow">ROOM</p><h2 id="cards-title">카드</h2></div>
+        <span class="topbar__quiet">3장의 카드</span>
+      </header>
+      <div class="cards__intro"><p id="cards-theme"></p><p>한 장을 골라, 잠시 머물러 보세요.</p></div>
+      <div id="card-fan" class="card-fan" aria-label="레슨 카드 세 장"></div>
+      <button class="cards__return" type="button" data-route="#/room">관점의 방으로 돌아가기</button>
+    </section>
+
+    <section id="lesson-view" class="view" hidden aria-labelledby="lesson-title">
+      <header class="topbar topbar--lesson">
+        <button class="text-button" id="lesson-box-button" type="button">← 이 방의 카드</button>
+        <p class="topbar__quiet" id="lesson-position"></p>
+        <button class="text-button" type="button" data-route="#/room">관점의 방</button>
+      </header>
+      <article id="lesson-content" class="lesson" tabindex="-1"></article>
+    </section>
+  </main>
+  <div id="warp" class="warp" aria-hidden="true"></div>
+  <p id="announcer" class="sr-only" aria-live="polite"></p>
+  <script src="js/site-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/intro.js"></script>
+  <script src="js/room.js"></script>
+  <script src="js/slides.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
