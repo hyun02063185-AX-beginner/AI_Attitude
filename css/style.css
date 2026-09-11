@@ -192,6 +192,124 @@ body::before {
 .s-img-cap { margin-top: 18px; color: var(--muted); font-size: 1rem; text-align: center; width: 100%; }
 .s-img-hint { display: none; }
 
+/* ---------- Golden rhythm: Direction A base, limited evidence language ---------- */
+.slide--section { padding-left: clamp(10px, 2vw, 26px); }
+.slide--section .s-cover-title { max-width: 18ch; }
+.slide--section .s-cover-sub { max-width: 42ch; }
+
+.slide--image {
+  width: 100%; min-height: 0;
+  display: grid; align-items: center; gap: clamp(20px, 3vw, 42px);
+  text-align: left;
+}
+.s-image-copy { position: relative; z-index: 1; }
+.slide--image .s-title { margin: 0; }
+.s-image-figure { position: relative; margin: 0; min-width: 0; }
+.slide--image .s-img { max-height: min(54vh, 468px); }
+.slide--image .s-img-cap { margin: 15px 0 0; text-align: center; }
+.s-image-statement {
+  margin: 20px 0 0; max-width: 19ch;
+  color: var(--ink); font-family: var(--font-display); font-size: clamp(1.55rem, 3vw, 2.45rem);
+  font-weight: 700; line-height: 1.48;
+}
+
+/* B-derived evidence language remains a local, quiet annotation—not a Skin. */
+.s-evidence-marker {
+  display: inline-flex; align-items: center; gap: 9px; margin: 0 0 15px;
+  color: var(--linen); font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: .68rem; font-weight: 600; letter-spacing: .13em; line-height: 1.2;
+}
+.s-evidence-marker::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--amber);
+  box-shadow: 0 0 12px rgba(233,168,90,.6);
+}
+
+/* Image-led concept: the image is the exhibit. */
+.slide--image-feature { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+.slide--image-feature .s-image-copy { order: 0; }
+.slide--image-feature .s-title { margin-bottom: 18px; }
+.slide--image-feature .s-image-figure { width: min(100%, 1028px); }
+
+/* Map/flow: a spatial path changes the reading order without becoming a panel. */
+.slide--image-flow,
+.slide--image-flow-case { grid-template-columns: minmax(230px, .7fr) minmax(480px, 1.3fr); }
+.slide--image-flow .s-image-copy,
+.slide--image-flow-case .s-image-copy { align-self: center; }
+.slide--image-flow .s-image-copy::after,
+.slide--image-flow-case .s-image-copy::after {
+  content: ""; display: block; width: min(170px, 70%); height: 1px; margin-top: 27px;
+  background: linear-gradient(90deg, var(--amber), rgba(233,168,90,.08));
+  box-shadow: 0 0 14px rgba(233,168,90,.24);
+}
+.slide--image-flow .s-image-figure::after,
+.slide--image-flow-case .s-image-figure::after {
+  content: ""; position: absolute; left: 9%; right: 9%; bottom: 13%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244,236,223,.55), transparent);
+  pointer-events: none;
+}
+
+/* Statements reserve more room for the instructor's spoken explanation. */
+.slide--image-statement { grid-template-columns: minmax(310px, .86fr) minmax(340px, 1.14fr); }
+.slide--image-statement .s-image-figure { align-self: end; }
+.slide--image-statement .s-img { min-height: 250px; object-position: center; opacity: .86; }
+
+/* Decision, evidence and review use only a thin, semantic verification cue. */
+.slide--image-decision,
+.slide--image-evidence,
+.slide--image-review { grid-template-columns: minmax(270px, .72fr) minmax(500px, 1.28fr); }
+.slide--image-decision .s-image-figure,
+.slide--image-evidence .s-image-figure,
+.slide--image-review .s-image-figure { padding-left: 15px; }
+.slide--image-decision .s-image-figure::before,
+.slide--image-evidence .s-image-figure::before,
+.slide--image-review .s-image-figure::before {
+  content: ""; position: absolute; z-index: 1; left: 0; top: 11%; bottom: 18%; width: 1px;
+  background: linear-gradient(180deg, transparent, var(--amber), transparent);
+  box-shadow: 0 0 12px rgba(233,168,90,.42);
+}
+
+/* Verification and comparison change the balance, never into application cards. */
+.slide--image-verification { grid-template-columns: minmax(500px, 1.25fr) minmax(260px, .75fr); }
+.slide--image-verification .s-image-copy { order: 2; }
+.slide--image-verification .s-image-figure { order: 1; padding-right: 15px; }
+.slide--image-verification .s-image-figure::after {
+  content: ""; position: absolute; z-index: 1; right: 0; top: 17%; bottom: 22%; width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(233,168,90,.8), transparent);
+  box-shadow: 0 0 12px rgba(233,168,90,.28);
+}
+.slide--image-compare { grid-template-columns: minmax(260px, .7fr) minmax(510px, 1.3fr); }
+.slide--image-compare .s-image-figure::before {
+  content: ""; position: absolute; z-index: 1; left: 8%; right: 8%; bottom: 12%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(233,168,90,.7), transparent);
+  pointer-events: none;
+}
+
+/* Record is a quiet keepsake; review returns to the evidence line. */
+.slide--image-record { grid-template-columns: minmax(500px, 1.2fr) minmax(260px, .8fr); }
+.slide--image-record .s-image-copy { order: 2; }
+.slide--image-record .s-image-figure { order: 1; }
+.slide--image-record .s-img { box-shadow: 24px 30px 70px -34px rgba(0,0,0,.8), 0 0 0 1px rgba(244,236,223,.06); }
+
+/* Recaps are a guided trail, not six equal cards. */
+.slide--recap .s-title { margin-bottom: 8px; }
+.slide--recap .s-list {
+  counter-reset: recap; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(32px, 6vw, 88px); row-gap: 15px; max-width: 880px; margin-top: 6px;
+}
+.slide--recap .s-list li {
+  counter-increment: recap; min-height: 2.1em; padding: 0 0 0 36px; font-size: clamp(.98rem, 1.35vw, 1.1rem);
+  border-left: 1px solid rgba(233,168,90,.24);
+}
+.slide--recap .s-list li::before {
+  content: counter(recap, decimal-leading-zero); left: -1px; top: .18em; width: 27px; height: auto;
+  border-radius: 0; background: transparent; box-shadow: none; color: var(--amber);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: .67rem; font-weight: 700;
+  line-height: 1.5; transform: translateX(-1px);
+}
+
+.slide--key-message .s-quote { font-size: clamp(1.8rem, 4.2vw, 3.15rem); max-width: 24ch; text-shadow: 0 0 65px rgba(233,168,90,.15); }
+.slide--key-message .s-quote-by { color: var(--amber); }
+
 /* ---------- Closing ---------- */
 .s-closing-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 4.2vw, 3rem); line-height: 1.28; white-space: pre-line; max-width: 20ch; margin: 0 0 24px;
   text-shadow: 0 0 70px rgba(233,168,90,.2); }
@@ -251,11 +369,27 @@ body::before {
 @media (max-width: 900px) {
   .s-split { grid-template-columns: 1fr; }
   .slide-stage { width: 94vw; height: 80vh; }
+  .slide--image,
+  .slide--image-flow,
+  .slide--image-flow-case,
+  .slide--image-statement,
+  .slide--image-decision,
+  .slide--image-evidence,
+  .slide--image-review,
+  .slide--image-verification,
+  .slide--image-compare,
+  .slide--image-record { grid-template-columns: 1fr; gap: 20px; }
+  .slide--image-verification .s-image-copy,
+  .slide--image-record .s-image-copy { order: 0; }
+  .slide--image-verification .s-image-figure,
+  .slide--image-record .s-image-figure { order: 0; }
 }
 @media (max-width: 640px) {
   .slide-topbar, .slide-nav { padding-left: 18px; padding-right: 18px; }
   .slide-lecture-name { display: none; }
   .s-cover-wm { display: none; }
+  .slide--recap .s-list { grid-template-columns: 1fr; row-gap: 10px; }
+  .s-image-statement { max-width: 24ch; }
 }
 
 /* ---------- Reduced motion ---------- */

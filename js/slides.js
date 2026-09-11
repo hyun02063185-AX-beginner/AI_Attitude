@@ -33,7 +33,7 @@
         // Sprint 3: watermark 숫자는 section.id가 아니라 Deck 안에서의 순번(1-base)을 쓴다
         // — id는 문자열일 수 있고("why-1" 등), 화면에 보이는 숫자는 순전히 장식이기 때문.
         const ord = section ? Deck.sectionIndexOf(section.id) + 1 : 0;
-        return `<div class="slide">
+        return `<div class="slide slide--section">
           ${ord > 0 ? `<span class="s-cover-wm">${String(ord).padStart(2, "0")}</span>` : ""}
           <div class="s-kicker">${esc(s.kicker || "")}</div>
           <h2 class="s-cover-title">${esc(s.title)}</h2>
@@ -48,7 +48,7 @@
           ${renderLink(s)}
         </div>`;
       case "bullets":
-        return `<div class="slide">
+        return `<div class="slide slide--recap">
           <h3 class="s-title">${esc(s.title)}</h3>
           ${s.subtitle ? `<p class="s-sub">${esc(s.subtitle)}</p>` : ""}
           <ul class="s-list">${(s.items || []).map((it, i) =>
@@ -56,7 +56,7 @@
           ${renderLink(s)}
         </div>`;
       case "quote":
-        return `<div class="slide">
+        return `<div class="slide slide--key-message">
           <p class="s-quote">${esc(s.text)}</p>
           ${s.by ? `<p class="s-quote-by">${esc(s.by)}</p>` : ""}
           ${renderLink(s)}
@@ -72,16 +72,25 @@
           </div>
           ${renderLink(s)}
         </div>`;
-      case "image":
-        return `<div class="slide" style="align-items:center;text-align:center">
-          ${s.title ? `<h3 class="s-title" style="margin-bottom:20px">${esc(s.title)}</h3>` : ""}
-          <img class="s-img${s.diagram ? " s-img--diagram" : ""}" src="${esc(s.src || "")}" alt="${esc(s.alt || s.title || s.caption || "")}"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-          <div class="s-img-fallback" style="display:none">이미지를 <code>assets/</code>에 넣고 경로를 지정하세요<br>(${esc(s.src || "")})</div>
-          ${s.caption ? `<p class="s-img-cap">${esc(s.caption)}</p>` : ""}
-          <span class="s-img-hint">＋ 크게 · － 원래대로</span>
+      case "image": {
+        const layout = /^[a-z-]+$/.test(s.layout || "") ? s.layout : "feature";
+        const statement = layout === "statement";
+        return `<article class="slide slide--image slide--image-${layout}">
+          <div class="s-image-copy">
+            ${s.marker ? `<span class="s-evidence-marker">${esc(s.marker)}</span>` : ""}
+            ${s.title ? `<h3 class="s-title">${esc(s.title)}</h3>` : ""}
+            ${statement && s.caption ? `<p class="s-image-statement">${esc(s.caption)}</p>` : ""}
+          </div>
+          <figure class="s-image-figure">
+            <img class="s-img${s.diagram ? " s-img--diagram" : ""}" src="${esc(s.src || "")}" alt="${esc(s.alt || s.title || s.caption || "")}"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <div class="s-img-fallback" style="display:none">이미지를 <code>assets/</code>에 넣고 경로를 지정하세요<br>(${esc(s.src || "")})</div>
+            ${!statement && s.caption ? `<figcaption class="s-img-cap">${esc(s.caption)}</figcaption>` : ""}
+            <span class="s-img-hint">＋ 크게 · － 원래대로</span>
+          </figure>
           ${renderLink(s)}
-        </div>`;
+        </article>`;
+      }
       case "closing":
         return `<div class="slide">
           <h2 class="s-closing-title">${esc(s.title)}</h2>
