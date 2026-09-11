@@ -1,44 +1,410 @@
-const Slides = (() => {
-  const escape = (text) => String(text).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[character]));
-  const imageAlt = {
-    1: '운전대를 잡은 사람 옆에서 AI 로봇이 지도를 안내하는 모습',
-    2: '큰 지도 위에서 주요 경로를 함께 설계하는 사람과 AI 로봇',
-    3: '하나의 경로가 여러 단계에서 다양한 방향으로 갈라지는 지도를 사람과 AI가 살펴보는 모습',
-    4: '하나의 목적지를 향해 선택의 기준을 확인하는 사람과 AI 로봇',
-    5: '예상한 경로와 실제 흐름을 나란히 비교하는 사람과 AI 로봇',
-    6: '완성된 목적지와 여러 완료 지점을 확인하는 사람과 AI 로봇',
-    7: '세 가지 기준으로 하나의 결과를 함께 살펴보는 사람과 AI 로봇',
-    8: '사람이 직접 경로를 실행하며 AI 로봇과 반응을 확인하는 모습',
-    9: '넓은 지도에서 문제 지점을 확대해 추적하는 사람과 AI 로봇',
-    10: '질문을 거듭해 더 분명한 답에 다가가는 사람과 AI 로봇',
-    11: '목적과 흐름, 막힌 이유를 기록으로 남기는 사람과 AI 로봇',
-    12: 'AI가 정리한 기록을 사람이 다시 대조해 검토하는 모습'
+/* =========================================================================
+   slides.js — 인터랙티브 강의 슬라이드 엔진
+   ========================================================================= */
+(function () {
+  "use strict";
+
+  const stage = document.getElementById("slide-stage");
+  const dotsEl = document.getElementById("slide-dots");
+  const counter = document.getElementById("slide-counter");
+  const nameEl = document.getElementById("slide-lecture-name");
+  const progressFill = document.getElementById("slide-progress-fill");
+  const prevBtn = document.getElementById("slide-prev");
+  const nextBtn = document.getElementById("slide-next");
+  const exitBtn = document.getElementById("slide-exit");
+
+  let current = 0;
+  let slides = [];
+  let activeSection = null;
+  let accentIndex = null;
+
+  /* ---------- 다음 Section 찾기 (마지막 슬라이드 → 다음 Section으로 이어보기) ----------
+     Sprint 3: CURRICULUM.boxes도 window.DECK_SECTIONS 전역 배열도 더 이상 직접 참조하지
+     않는다 — Deck.nextSection(id) 하나로 완전히 대체됐다(§07 결합 제거 결과). */
+  function nextSectionOf() {
+    if (!activeSection) return null;
+    return Deck.nextSection(activeSection.id);
+  }
+
+  /* ---------- 슬라이드 HTML 렌더 ---------- */
+  function renderSlide(s, section) {
+    switch (s.type) {
+      case "cover": {
+        // Sprint 3: watermark 숫자는 section.id가 아니라 Deck 안에서의 순번(1-base)을 쓴다
+        // — id는 문자열일 수 있고("why-1" 등), 화면에 보이는 숫자는 순전히 장식이기 때문.
+        const ord = section ? Deck.sectionIndexOf(section.id) + 1 : 0;
+        return `<div class="slide">
+          ${ord > 0 ? `<span class="s-cover-wm">${String(ord).padStart(2, "0")}</span>` : ""}
+          <div class="s-kicker">${esc(s.kicker || "")}</div>
+          <h2 class="s-cover-title">${esc(s.title)}</h2>
+          ${s.subtitle ? `<p class="s-cover-sub">${esc(s.subtitle)}</p>` : ""}
+          ${renderLink(s)}
+        </div>`;
+      }
+      case "big":
+        return `<div class="slide" style="align-items:flex-start">
+          <h2 class="s-big">${esc(s.word)}</h2>
+          ${s.sub ? `<p class="s-big-sub">${esc(s.sub)}</p>` : ""}
+          ${renderLink(s)}
+        </div>`;
+      case "bullets":
+        return `<div class="slide">
+          <h3 class="s-title">${esc(s.title)}</h3>
+          ${s.subtitle ? `<p class="s-sub">${esc(s.subtitle)}</p>` : ""}
+          <ul class="s-list">${(s.items || []).map((it, i) =>
+            `<li style="animation-delay:${0.15 + i * 0.13}s">${esc(it)}</li>`).join("")}</ul>
+          ${renderLink(s)}
+        </div>`;
+      case "quote":
+        return `<div class="slide">
+          <p class="s-quote">${esc(s.text)}</p>
+          ${s.by ? `<p class="s-quote-by">${esc(s.by)}</p>` : ""}
+          ${renderLink(s)}
+        </div>`;
+      case "split":
+        return `<div class="slide">
+          <h3 class="s-title">${esc(s.title)}</h3>
+          <div class="s-split">
+            <div class="s-col"><h4>${esc((s.left || [])[0] || "")}</h4>
+              <ul>${(s.left || []).slice(1).map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+            <div class="s-col"><h4>${esc((s.right || [])[0] || "")}</h4>
+              <ul>${(s.right || []).slice(1).map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+          </div>
+          ${renderLink(s)}
+        </div>`;
+      case "image":
+        return `<div class="slide" style="align-items:center;text-align:center">
+          ${s.title ? `<h3 class="s-title" style="margin-bottom:20px">${esc(s.title)}</h3>` : ""}
+          <img class="s-img${s.diagram ? " s-img--diagram" : ""}" src="${esc(s.src || "")}" alt="${esc(s.alt || s.title || s.caption || "")}"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <div class="s-img-fallback" style="display:none">이미지를 <code>assets/</code>에 넣고 경로를 지정하세요<br>(${esc(s.src || "")})</div>
+          ${s.caption ? `<p class="s-img-cap">${esc(s.caption)}</p>` : ""}
+          <span class="s-img-hint">＋ 크게 · － 원래대로</span>
+          ${renderLink(s)}
+        </div>`;
+      case "closing":
+        return `<div class="slide">
+          <h2 class="s-closing-title">${esc(s.title)}</h2>
+          ${s.teaser ? `<div class="s-teaser">${esc(s.teaser)}</div>` : ""}
+          ${renderLink(s)}
+        </div>`;
+      default:
+        return `<div class="slide"><p class="s-cover-sub">알 수 없는 슬라이드 타입: ${esc(s.type)}</p></div>`;
+    }
+  }
+
+  // 선택 필드 link:{url,label} — Codyssey Lecture js/slides.js:94-97 계약 그대로 이식
+  // (있으면 새 탭 버튼, 없으면 아무것도 그리지 않음 — 재발명하지 않음, §12)
+  function renderLink(s) {
+    if (!s.link || !s.link.url) return "";
+    return `<a class="s-link" href="${esc(s.link.url)}" target="_blank" rel="noopener">${esc(s.link.label || s.link.url)}</a>`;
+  }
+
+  function esc(t) {
+    return String(t == null ? "" : t)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  /* ---------- 모바일: 슬라이드 진입 시 가로 전체화면 자동 적용 ----------
+     QR로 들어오면 브라우저 기본 UI(주소창 등) 때문에 화면이 좁다.
+     터치 기기에서 슬라이드에 들어오면 전체화면 + 가로 고정을 시도한다.
+     iOS Safari 등 orientation.lock 미지원 브라우저에선 회전 유도 배너로 대체(rotate-hint). */
+  const coarsePointer = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+  function requestImmersive() {
+    if (!coarsePointer) return;
+    const el = document.documentElement;
+    const reqFs = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (reqFs && !document.fullscreenElement && !document.webkitFullscreenElement) {
+      try { const p = reqFs.call(el); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+    }
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock("landscape").catch(() => {});
+    }
+  }
+  function exitImmersive() {
+    const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+    if (exitFs && (document.fullscreenElement || document.webkitFullscreenElement)) {
+      try { const p = exitFs.call(document); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+    }
+    if (screen.orientation && screen.orientation.unlock) {
+      try { screen.orientation.unlock(); } catch (e) {}
+    }
+  }
+  // Sprint 2 Exp2: Room/Box가 없으므로 몰입 구간은 deck(슬라이드) 하나뿐
+  const IMMERSIVE_ROUTES = { deck: true, fan: true };
+  const rotateHint = document.getElementById("rotate-hint");
+  const portraitMQ = window.matchMedia && window.matchMedia("(orientation: portrait)");
+  let rotateHintDismissed = false;
+  function updateRotateHint() {
+    if (!rotateHint || !coarsePointer) return;
+    const inZone = !!IMMERSIVE_ROUTES[document.documentElement.dataset.route];
+    rotateHint.hidden = rotateHintDismissed || !(inZone && portraitMQ && portraitMQ.matches);
+  }
+  if (rotateHint) {
+    document.getElementById("rotate-hint-close").addEventListener("click", () => {
+      rotateHintDismissed = true; updateRotateHint();
+    });
+  }
+  if (portraitMQ) {
+    const onOrientChange = () => { rotateHintDismissed = false; updateRotateHint(); };
+    portraitMQ.addEventListener ? portraitMQ.addEventListener("change", onOrientChange) : portraitMQ.addListener(onOrientChange);
+  }
+  // 몰입 구간(방·상자·슬라이드)을 벗어나면(입장 화면으로 등) 전체화면·가로고정 해제
+  new MutationObserver(() => {
+    if (!IMMERSIVE_ROUTES[document.documentElement.dataset.route]) exitImmersive();
+    updateRotateHint();
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-route"] });
+
+  // main.js(입장 버튼 클릭 = 워프 시작 시점)에서 바로 몰입모드를 걸 수 있도록 노출
+  window.Immersive = { request: requestImmersive, exit: exitImmersive };
+
+  /* ---------- Section 열기 (라우터가 deck/{sectionId} 라우트에서 호출) ----------
+     Sprint 3: 시그니처에서 "lecture"/"box"라는 과정형 어휘를 걷어냈다. 이 함수는 이제
+     Section 객체(Deck.getSection()이 돌려주는 {id,title,slides,...})와 accent 색상
+     인덱스(숫자, Skin 매핑용 — Box 존재와 무관)만 받는다. */
+  function openSection(section, accentIdx, slideIndex) {
+    requestImmersive();
+    rotateHintDismissed = false;
+    updateRotateHint();
+    activeSection = section;
+    accentIndex = accentIdx;
+    slides = section.slides || [];
+    current = Math.max(0, Math.min(slideIndex || 0, slides.length - 1));
+
+    const total = Deck.getSections().length;
+    const idx = Deck.sectionIndexOf(section.id);
+    nameEl.textContent = `Section ${idx + 1}/${total} · ${section.title}`;
+    if (accentIdx != null) document.documentElement.dataset.slideBox = String(accentIdx);
+
+    // 렌더
+    stage.innerHTML = slides.map(s => renderSlide(s, section)).join("");
+    dotsEl.innerHTML = slides.map((_, i) =>
+      `<i data-i="${i}" class="${i === 0 ? "active" : ""}"></i>`).join("");
+    dotsEl.querySelectorAll("i").forEach(d =>
+      d.addEventListener("click", () => show(Number(d.dataset.i))));
+
+    App.goScene("slides");
+    show(current);   // 완료 표시는 마지막 슬라이드까지 봐야 켜진다(show에서 처리)
+  }
+
+  /* ---------- 슬라이드 전환 ---------- */
+  function show(i) {
+    if (i < 0 || i >= slides.length) return;
+    closeZoom();               // 슬라이드 바뀌면 확대 상태는 해제
+    current = i;
+    const cards = stage.querySelectorAll(".slide");
+    cards.forEach((c, idx) => c.classList.toggle("is-active", idx === i));
+
+    counter.textContent = `${i + 1} / ${slides.length}`;
+    progressFill.style.width = ((i + 1) / slides.length * 100) + "%";
+    dotsEl.querySelectorAll("i").forEach((d, idx) => d.classList.toggle("active", idx === i));
+    prevBtn.disabled = i === 0;
+    // 마지막 슬라이드: 다음 강의가 있으면 "다음 강의 ▶"로 이어보기, 없으면(20강) 비활성
+    if (i === slides.length - 1) {
+      const nl = nextSectionOf();
+      nextBtn.disabled = !nl;
+      nextBtn.textContent = nl ? "다음 강의 ▶" : "다음 ▶";
+      nextBtn.classList.toggle("next-lecture", !!nl);
+    } else {
+      nextBtn.disabled = false;
+      nextBtn.textContent = "다음 ▶";
+      nextBtn.classList.remove("next-lecture");
+    }
+
+    // 마지막 슬라이드까지 도달하면 그때 '완료'로 표시 (끝까지 들어야 점이 켜진다)
+    if (activeSection && i === slides.length - 1) Progress.mark(activeSection.id);
+
+    // 이어보기 저장: 이동마다 위치 기억, 끝까지 본 강은 해제(다음번엔 처음부터)
+    if (activeSection && App.Resume) {
+      if (i === slides.length - 1) App.Resume.clear(activeSection.id);
+      else App.Resume.set(activeSection.id, i);
+    }
+
+    // 슬라이드 위치를 URL에 반영(히스토리 미적립) → 뒤로가기 한 번이면 카드 리스트로
+    if (activeSection) App.Router.replace("deck/" + Deck.sectionIndexOf(activeSection.id) + "/" + i);
+    revealChrome();   // 슬라이드 바뀔 때 네비를 잠깐 보여줬다 숨김
+  }
+  const next = () => {
+    if (current === slides.length - 1) {          // 마지막 슬라이드 → 다음 강의로
+      const nl = nextSectionOf();
+      if (nl) App.Router.go("deck/" + Deck.sectionIndexOf(nl.id));
+      return;
+    }
+    show(current + 1);
   };
-  const render = (lesson, box, previous, next) => {
-    const imagePath = SITE_CONFIG.imagePathPattern.replace('{number}', String(lesson.id).padStart(2, '0'));
-    document.getElementById('lesson-box-button').textContent = `← ${box.name}`;
-    document.getElementById('lesson-position').textContent = `${lesson.id} / 12`;
-    document.getElementById('lesson-content').innerHTML = `
-      <div class="lesson__header">
-        <nav class="lesson-context-nav" aria-label="현재 카드 위치">
-          <button class="text-button" type="button" data-route="#/box/${escape(box.id)}">← ${escape(box.name)}</button>
-          <button class="text-button" type="button" data-route="#/room">관점의 방</button>
-        </nav>
-        <p class="eyebrow">${escape(box.name)} · CARD ${String(lesson.id).padStart(2, '0')}</p>
-        <p class="lesson__question">${escape(lesson.question)}</p>
-        <h1 id="lesson-title">${escape(lesson.title)}</h1>
-        <p class="lesson__message">${escape(lesson.message)}</p>
-      </div>
-      <figure class="visual-shell visual-shell--${box.accent}" style="aspect-ratio:${SITE_CONFIG.imageAspectRatio}">
-        <img class="lesson-visual" src="${escape(imagePath)}" alt="${escape(imageAlt[lesson.id])}" onload="this.closest('figure').classList.add('visual-shell--loaded')" onerror="this.hidden=true;this.closest('figure').classList.add('visual-shell--fallback')">
-        <div class="visual-shell__fallback" aria-hidden="true"><div class="visual-shell__halo"></div><div class="visual-shell__line visual-shell__line--one"></div><div class="visual-shell__line visual-shell__line--two"></div><div class="visual-shell__dot"></div><figcaption><span>관점의 이미지</span><small>${escape(lesson.visual)}</small></figcaption></div>
-      </figure>
-      <div class="lesson__body"><p>${escape(lesson.description)}</p></div>
-      <aside class="takeaway"><span class="takeaway__label">TAKEAWAY</span><p>${escape(lesson.takeaway)}</p></aside>
-      <nav class="lesson-nav" aria-label="카드 이동">
-        ${previous ? `<button class="button button--quiet" type="button" data-route="#/lesson/${previous.id}">← <span>${escape(previous.title)}</span></button>` : '<span></span>'}
-        ${next ? `<button class="button button--next" type="button" data-route="#/lesson/${next.id}"><span>${escape(next.title)}</span> →</button>` : `<button class="button button--next" type="button" data-route="#/room"><span>관점의 방으로</span> →</button>`}
-      </nav>`;
-  };
-  return { render };
+  const prev = () => show(current - 1);
+
+  /* ---------- 크롬(상단바·하단 네비) 자동 숨김 ----------
+     전체 화면을 슬라이드에 내어주고, 상·하단 근처로 마우스가 가면(또는 슬라이드 전환 시)
+     잠깐 살아났다가 사라진다. 터치 기기는 hover가 없으니 항상 표시. */
+  const scene = document.getElementById("scene-slides");
+  const topbar = document.querySelector(".slide-topbar");
+  const nav = document.querySelector(".slide-nav");
+  const coarse = window.matchMedia && window.matchMedia("(hover: none)").matches;
+  let hideTimer = null;
+
+  function setChrome(on) {
+    topbar.classList.toggle("show", on);
+    nav.classList.toggle("show", on);
+  }
+  function revealChrome() {
+    if (coarse) { setChrome(true); return; }   // 터치: 항상 표시
+    setChrome(true);
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => setChrome(false), 2000);
+  }
+  function initChrome() {
+    if (coarse) { setChrome(true); return; }    // 터치 기기는 상시 노출
+    scene.addEventListener("mousemove", (e) => {
+      const H = window.innerHeight;
+      const nearEdge = e.clientY < H * 0.16 || e.clientY > H * 0.84;
+      if (nearEdge) {
+        setChrome(true);
+        clearTimeout(hideTimer);
+      } else {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => setChrome(false), 1400);
+      }
+    });
+    // 크롬 위에 커서가 있으면 유지
+    [topbar, nav].forEach(el => {
+      el.addEventListener("mouseenter", () => { setChrome(true); clearTimeout(hideTimer); });
+      el.addEventListener("mouseleave", () => { clearTimeout(hideTimer); hideTimer = setTimeout(() => setChrome(false), 1200); });
+    });
+  }
+
+  /* ---------- 이미지 전체화면 확대 ('+' 크게 · '-' 원래대로) ---------- */
+  const imgZoom = document.createElement("div");
+  imgZoom.className = "img-zoom";
+  const zoomHintText = coarsePointer ? "두 손가락으로 확대 · 탭해서 닫기" : "－ 또는 Esc 로 닫기";
+  imgZoom.innerHTML = `<img alt=""><span class="img-zoom__hint">${zoomHintText}</span>`;
+  document.body.appendChild(imgZoom);
+  const zimg = imgZoom.querySelector("img");
+  let zoomOpen = false;
+
+  function currentImg() {
+    const s = stage.querySelector(".slide.is-active");
+    const img = s && s.querySelector("img.s-img");
+    return (img && getComputedStyle(img).display !== "none") ? img : null;
+  }
+  function openZoom() {
+    const img = currentImg();
+    if (!img) return;                       // 이미지 슬라이드가 아니면 무시
+    zimg.src = img.currentSrc || img.src;
+    resetZoom();
+    imgZoom.classList.add("show");
+    zoomOpen = true;
+  }
+  function closeZoom() {
+    imgZoom.classList.remove("show");
+    zoomOpen = false;
+    resetZoom();
+  }
+
+  /* ---------- 확대뷰 안에서 두 손가락 핀치줌 + 패닝 ----------
+     전체화면(가로 몰입모드)에선 브라우저 기본 핀치줌이 막히므로, 확대 오버레이에서만
+     자체 제스처로 1~5배 확대·이동을 지원한다. 닫으면 배율은 1로 리셋. */
+  let scale = 1, tx = 0, ty = 0;
+  let startDist = 0, startScale = 1, startMidX = 0, startMidY = 0, startTx = 0, startTy = 0;
+  let panning = false, lastX = 0, lastY = 0, gestured = false;
+  function applyTransform() { zimg.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`; }
+  function resetZoom() { scale = 1; tx = 0; ty = 0; zimg.style.transform = ""; }
+  function distOf(a, b) { return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY); }
+
+  imgZoom.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      startDist = distOf(e.touches[0], e.touches[1]);
+      startScale = scale;
+      startMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      startMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      startTx = tx; startTy = ty; gestured = true; panning = false;
+    } else if (e.touches.length === 1 && scale > 1) {
+      panning = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+    } else {
+      gestured = false;                     // 단순 탭 → 닫기 후보
+    }
+  }, { passive: false });
+
+  imgZoom.addEventListener("touchmove", (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const d = distOf(e.touches[0], e.touches[1]);
+      scale = Math.min(5, Math.max(1, startScale * (d / (startDist || 1))));
+      const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      tx = startTx + (mx - startMidX);
+      ty = startTy + (my - startMidY);
+      if (scale <= 1.001) { tx = 0; ty = 0; }
+      applyTransform(); gestured = true;
+    } else if (panning && e.touches.length === 1) {
+      e.preventDefault();
+      tx += e.touches[0].clientX - lastX;
+      ty += e.touches[0].clientY - lastY;
+      lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+      applyTransform(); gestured = true;
+    }
+  }, { passive: false });
+
+  imgZoom.addEventListener("touchend", (e) => {
+    if (e.touches.length === 0) {
+      if (scale <= 1.02) resetZoom();       // 원배율 근처면 깔끔히 리셋
+      panning = false;
+    }
+  });
+
+  // 클릭/탭으로 닫기 — 단, 핀치·패닝 제스처 직후의 합성 클릭은 무시
+  imgZoom.addEventListener("click", () => {
+    if (gestured) { gestured = false; return; }
+    closeZoom();
+  });
+
+  // Sprint 3: 나가기 목적지는 presentation.sectionNavigator(§09)에 따라 갈린다 —
+  // "fan"이면 Section 허브(Fan)로, 그 외("none" 등)에는 Start로. slides.js는 이 설정값의
+  // "의미"만 소비할 뿐, Card Fan을 직접 그리거나 켤지 말지 판단하지 않는다(§9 원칙).
+  function exitToCards() {
+    const nav = Deck.getPresentation().sectionNavigator;
+    App.Router.go(nav === "fan" ? "fan" : "start");
+  }
+
+  /* ---------- 네비게이션 ---------- */
+  function initSlides() {
+    initChrome();
+    nextBtn.addEventListener("click", next);
+    prevBtn.addEventListener("click", prev);
+    exitBtn.addEventListener("click", exitToCards);
+
+    document.addEventListener("keydown", (e) => {
+      if (!scene.classList.contains("is-active")) return;
+      // 이미지 확대 토글 ('+'는 Shift+= 또는 숫자패드 +, '='도 허용 / 브라우저 줌(Ctrl/⌘)은 건드리지 않음)
+      if ((e.key === "+" || e.key === "=") && !e.ctrlKey && !e.metaKey) { e.preventDefault(); openZoom(); return; }
+      if ((e.key === "-" || e.key === "_") && !e.ctrlKey && !e.metaKey) { e.preventDefault(); closeZoom(); return; }
+      if (zoomOpen) {                       // 확대 중엔 Esc로만 닫고, 방향키 등은 무시(확대가 남지 않게)
+        if (e.key === "Escape") { e.preventDefault(); closeZoom(); }
+        return;
+      }
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); next(); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prev(); }
+      else if (e.key === "Escape") exitToCards();
+      else if (e.key === "Home") show(0);
+      else if (e.key === "End") show(slides.length - 1);
+    });
+
+    // 이미지 클릭 → '+'와 동일하게 전체화면 확대
+    stage.addEventListener("click", (e) => {
+      const img = e.target.closest && e.target.closest("img.s-img");
+      if (img && getComputedStyle(img).display !== "none") openZoom();
+    });
+
+    // 스와이프(모바일)
+    let sx = 0;
+    stage.addEventListener("touchstart", e => sx = e.touches[0].clientX, { passive: true });
+    stage.addEventListener("touchend", e => {
+      const dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 50) (dx < 0 ? next : prev)();
+    }, { passive: true });
+  }
+
+  window.openSection = openSection;
+  window.initSlides = initSlides;
 })();
