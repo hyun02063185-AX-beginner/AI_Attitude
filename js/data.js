@@ -1,37 +1,164 @@
-/* Content is condensed from the author-owned master manuscript.
-   Each visual slot maps to assets/lessons/lesson-01.webp through lesson-12.webp. */
-const EXHIBITION = {
-  boxes: [
+/* =========================================================================
+   data.js — AI Attitude Web Deck 60 (AX Web Deck Standard v0.1)
+   -------------------------------------------------------------------------
+   콘텐츠는 legacy(AI_Attitude_legacy_20260911/js/data.js EXHIBITION)의 실제
+   원고를 그대로 옮겼다 — title/message/takeaway/이미지/alt 전부 가공 없이
+   재사용했다. 매핑 근거: docs/16_ai_attitude_webdeck60_content_map.md
+   Profile: Duration 60 · sectionNavigator none · resume false · Completion Variant B
+   ========================================================================= */
+window.DECK = {
+  meta: {
+    id: "ai-attitude-webdeck60",
+    title: "AI를 대하는 태도",
+    titleHtml: "AI를<br>대하는 태도",
+    kicker: "AI를 대하는 태도",
+    subtitle: "AI에게 일을 맡기기 전에, 먼저 가져야 할 기준을 살펴봅니다.",
+    note: "12가지 기준 · 약 60분"
+  },
+  presentation: {
+    sectionNavigator: "none",
+    resume: false
+  },
+  sections: [
     {
-      id: 'driver', name: '운전석', theme: '주도권과 이해', accent: 'amber',
-      lessons: [
-        { id: 1, title: '운전석은 누구인가', question: 'AI가 일을 해주면, 나는 무엇을 맡아야 할까?', message: 'AI는 손을 돕고, 방향은 내가 정한다.', description: 'AI는 빠르게 초안을 만들고 선택지를 넓혀 줍니다. 그러나 무엇을 향하는지, 무엇을 버릴지, 결과를 책임질지는 여전히 사람의 몫입니다. 도구가 앞서가게 두기보다 내가 먼저 운전석에 앉습니다.', takeaway: '방향을 정하는 사람을 잊지 않는다.', visual: '운전석과 조수석 사이에 놓인 한 줄의 빛' },
-        { id: 2, title: '먼저 그려야 할 지도', question: 'AI에게 요청하기 전에 무엇을 말할 수 있어야 할까?', message: '완벽한 설계보다 큰 흐름을 먼저 잡는다.', description: '처음부터 빈틈없는 계획이 필요하지는 않습니다. 시작과 끝, 그리고 그 사이의 큰 순서만 말할 수 있어도 요청은 훨씬 선명해집니다. 지도는 정답지가 아니라 길을 잃지 않기 위한 기준입니다.', takeaway: '작업 전, 시작과 끝을 한 문장씩 적는다.', visual: '세 지점을 잇는 조용한 경로' },
-        { id: 3, title: '이해의 최소선', question: '결과를 모두 설명할 수 있어야만 할까?', message: '무엇·순서·변화 지점을 설명할 수 있으면 된다.', description: '모든 코드를 외우거나 모든 기술을 알아야 하는 것은 아닙니다. 무엇이 일어나고, 어떤 순서로 움직이며, 어디를 바꾸면 결과가 달라지는지 설명할 수 있다면 다음 판단을 할 수 있습니다.', takeaway: '무엇·순서·변화를 내 말로 말해본다.', visual: '세 개의 작은 표식과 연결선' }
+      id: "before", title: "맡기기 전에 세우는 기준", tagline: "주도권과 이해, 목적·흐름·완료 기준", accent: 0,
+      slides: [
+        {
+          type: "cover", kicker: "AI가 일을 해주면, 나는 무엇을 맡아야 할까?",
+          title: "맡기기 전에 세우는 기준",
+          subtitle: "주도권과 이해, 그리고 목적 · 흐름 · 완료 기준"
+        },
+        {
+          type: "image", title: "운전석은 누구인가",
+          src: "assets/lessons/lesson-01.webp",
+          alt: "운전대를 잡은 사람 옆에서 AI 로봇이 지도를 안내하는 모습",
+          caption: "AI는 손을 돕고, 방향은 내가 정한다.",
+          layout: "feature"
+        },
+        {
+          type: "image", title: "먼저 그려야 할 지도",
+          src: "assets/lessons/lesson-02.webp",
+          alt: "큰 지도 위에서 주요 경로를 함께 설계하는 사람과 AI 로봇",
+          caption: "완벽한 설계보다 큰 흐름을 먼저 잡는다.",
+          layout: "flow"
+        },
+        {
+          type: "image", title: "이해의 최소선",
+          src: "assets/lessons/lesson-03.webp",
+          alt: "하나의 경로가 여러 단계에서 다양한 방향으로 갈라지는 지도를 사람과 AI가 살펴보는 모습",
+          caption: "무엇 · 순서 · 변화 지점을 설명할 수 있으면 된다.",
+          layout: "statement"
+        },
+        {
+          type: "image", title: "이유를 적어둔다",
+          src: "assets/lessons/lesson-04.webp",
+          alt: "하나의 목적지를 향해 선택의 기준을 확인하는 사람과 AI 로봇",
+          caption: "목적은 모든 선택의 기준점이다.",
+          layout: "decision",
+          marker: "DECISION · PURPOSE"
+        },
+        {
+          type: "image", title: "흐름을 말해본다",
+          src: "assets/lessons/lesson-05.webp",
+          alt: "예상한 경로와 실제 흐름을 나란히 비교하는 사람과 AI 로봇",
+          caption: "흐름은 결과가 맞는지 비교하는 기준이다.",
+          layout: "flow-case"
+        },
+        {
+          type: "image", title: "끝의 모습을 정한다",
+          src: "assets/lessons/lesson-06.webp",
+          alt: "완성된 목적지와 여러 완료 지점을 확인하는 사람과 AI 로봇",
+          caption: "완료 기준은 보거나 눌러 확인할 수 있어야 한다.",
+          layout: "evidence"
+        },
+        {
+          type: "quote", text: "목적은 모든 선택의 기준점이다.", by: "이유를 적어둔다"
+        },
+        {
+          type: "bullets", title: "여기까지, 여섯 가지", subtitle: "맡기기 전에 세운 기준",
+          items: [
+            "방향을 정하는 사람을 잊지 않는다.",
+            "작업 전, 시작과 끝을 한 문장씩 적는다.",
+            "무엇 · 순서 · 변화를 내 말로 말해본다.",
+            "요청 앞에 “그래서 무엇을 위해?”를 붙인다.",
+            "누군가의 첫 행동부터 마지막 행동까지 따라가 본다.",
+            "완료를 눈으로 확인할 수 있는 문장으로 바꾼다."
+          ]
+        }
       ]
     },
     {
-      id: 'criteria', name: '기준을 세우는 책상', theme: '목적 · 흐름 · 완료 기준', accent: 'ochre',
-      lessons: [
-        { id: 4, title: '이유를 적어둔다', question: '이 작업은 누구에게 어떤 변화를 주려는가?', message: '목적은 모든 선택의 기준점이다.', description: 'AI는 그럴듯한 선택지를 많이 만들 수 있습니다. 그래서 더 먼저 필요한 것은 이 일을 왜 하는지의 한 문장입니다. 목적이 있으면 멋져 보이는 결과와 필요한 결과를 구분할 수 있습니다.', takeaway: '요청 앞에 “그래서 무엇을 위해?”를 붙인다.', visual: '한 점을 향하는 가느다란 나침반' },
-        { id: 5, title: '흐름을 말해본다', question: '사람은 어떤 순서로 이 결과를 만나게 될까?', message: '흐름은 결과가 맞는지 비교하는 기준이다.', description: '결과물은 한 화면이나 한 문장으로 끝나지 않습니다. 사용자가 들어와 무엇을 보고, 무엇을 누르고, 어디에 도착하는지의 흐름을 먼저 말해 보면 빠진 장면과 어색한 전환이 드러납니다.', takeaway: '누군가의 첫 행동부터 마지막 행동까지 따라가 본다.', visual: '입구에서 출구로 이어지는 네 개의 점' },
-        { id: 6, title: '끝의 모습을 정한다', question: '언제 “됐다”고 말할 수 있을까?', message: '완료 기준은 보거나 눌러 확인할 수 있어야 한다.', description: '“깔끔하게”, “잘 되게” 같은 말은 확인하기 어렵습니다. 보이는 문장, 눌러지는 버튼, 도착해야 할 화면처럼 관찰 가능한 끝의 모습을 정하면 AI의 결과도 내가 해야 할 검토도 분명해집니다.', takeaway: '완료를 눈으로 확인할 수 있는 문장으로 바꾼다.', visual: '작은 체크 표식이 켜지는 마지막 칸' }
-      ]
-    },
-    {
-      id: 'lab', name: '손으로 확인하는 실험대', theme: '검증과 원인 찾기', accent: 'clay',
-      lessons: [
-        { id: 7, title: '세 개의 잣대', question: '무엇에 비추어 결과를 확인할까?', message: '목적·흐름·완료 기준이 검증의 세 잣대다.', description: '결과가 그럴듯해 보여도 목적에 맞지 않거나 흐름을 끊을 수 있습니다. 앞에서 세운 목적, 흐름, 완료 기준을 다시 꺼내면 “좋아 보인다”를 넘어 실제로 맞는지 판단할 수 있습니다.', takeaway: '검증할 때 세 기준을 나란히 놓는다.', visual: '한 결과를 비추는 세 갈래의 빛' },
-        { id: 8, title: '직접 눌러본다', question: 'AI의 설명만 읽고 끝내도 될까?', message: '설명을 읽는 일과 직접 실행하는 일은 다르다.', description: '설명은 가능성을 말하고, 실행은 실제를 보여 줍니다. 링크를 열고, 버튼을 누르고, 입력하고, 다른 화면 크기에서도 확인해 봅니다. 손으로 지나가 본 경로에서만 보이는 문제가 있습니다.', takeaway: '결과를 읽기 전에 한 번 직접 움직여 본다.', visual: '손끝에서 반응하는 하나의 작은 점' },
-        { id: 9, title: '문제를 좁힌다', question: '막혔을 때 어디부터 다시 봐야 할까?', message: '기대와 실제의 차이로 범위를 먼저 좁힌다.', description: '문제가 생기면 모든 것을 다시 만들고 싶어집니다. 먼저 기대한 모습과 실제 모습을 나란히 적고, 처음 달라지는 지점을 찾습니다. 범위가 좁아지면 AI에게 다시 물을 질문도 구체적이 됩니다.', takeaway: '“기대”와 “실제”를 한 줄씩 분리해 적는다.', visual: '넓은 원에서 한 점으로 모이는 관찰선' }
-      ]
-    },
-    {
-      id: 'archive', name: '내 것으로 만드는 기록실', theme: '이해 · 재질문 · 기록 · 검토', accent: 'linen',
-      lessons: [
-        { id: 10, title: '답도 이해해야 한다', question: '받은 답을 어떻게 내 판단으로 바꿀까?', message: '이해될 때까지 다시 묻는 것이 관리의 시작이다.', description: '모르는 부분이 남았는데도 결과가 나온다는 이유만으로 넘어가면 다음 수정에서 길을 잃기 쉽습니다. 쉬운 말로 다시 설명해 달라고, 이유를 보여 달라고 묻습니다. 질문을 거듭하는 일은 의존이 아니라 관리입니다.', takeaway: '“왜 이렇게 되는가?”를 한 번 더 묻는다.', visual: '되돌아와 조금 더 밝아지는 질문의 고리' },
-        { id: 11, title: '다음의 나에게', question: '다음 작업에서 무엇을 남겨두면 좋을까?', message: '목적·흐름·막힌 이유 세 가지만 남긴다.', description: '모든 과정을 길게 기록할 필요는 없습니다. 이 작업의 목적, 지나온 흐름, 그리고 막혔던 이유를 짧게 남기면 다음의 나는 처음부터 다시 추측하지 않아도 됩니다. 기록은 미래의 나를 위한 손잡이입니다.', takeaway: '세 문장으로 오늘의 흔적을 남긴다.', visual: '나란히 놓인 세 장의 짧은 기록 카드' },
-        { id: 12, title: '기록을 검토한다', question: 'AI가 정리한 기록은 어디까지 믿어도 될까?', message: 'AI가 정리하고, 나는 실제와 맞는지 검토한다.', description: 'AI는 대화와 결과를 빠르게 정리하는 데 도움을 줄 수 있습니다. 다만 누락된 맥락이나 실제와 다른 표현은 남을 수 있습니다. 정리는 AI에게 맡기되, 현실과 맞는지 마지막으로 읽는 사람은 내가 됩니다.', takeaway: '정리본에는 항상 실제와 대조하는 마지막 눈이 필요하다.', visual: '기록 위를 천천히 지나가는 검토의 빛' }
+      id: "after", title: "맡긴 뒤 확인하고 남기는 것", tagline: "검증과 원인 찾기, 이해·재질문·기록·검토", accent: 1,
+      slides: [
+        {
+          type: "cover", kicker: "Section 2",
+          title: "맡긴 뒤 확인하고 남기는 것",
+          subtitle: "검증과 원인 찾기, 그리고 이해 · 재질문 · 기록 · 검토"
+        },
+        {
+          type: "image", title: "세 개의 잣대",
+          src: "assets/lessons/lesson-07.webp",
+          alt: "세 가지 기준으로 하나의 결과를 함께 살펴보는 사람과 AI 로봇",
+          caption: "목적 · 흐름 · 완료 기준이 검증의 세 잣대다.",
+          layout: "evidence",
+          marker: "EVIDENCE · 03"
+        },
+        {
+          type: "image", title: "직접 눌러본다",
+          src: "assets/lessons/lesson-08.webp",
+          alt: "사람이 직접 경로를 실행하며 AI 로봇과 반응을 확인하는 모습",
+          caption: "설명을 읽는 일과 직접 실행하는 일은 다르다.",
+          layout: "verification"
+        },
+        {
+          type: "image", title: "문제를 좁힌다",
+          src: "assets/lessons/lesson-09.webp",
+          alt: "넓은 지도에서 문제 지점을 확대해 추적하는 사람과 AI 로봇",
+          caption: "기대와 실제의 차이로 범위를 먼저 좁힌다.",
+          layout: "compare",
+          marker: "COMPARE · EXPECTED / ACTUAL"
+        },
+        {
+          type: "image", title: "답도 이해해야 한다",
+          src: "assets/lessons/lesson-10.webp",
+          alt: "질문을 거듭해 더 분명한 답에 다가가는 사람과 AI 로봇",
+          caption: "이해될 때까지 다시 묻는 것이 관리의 시작이다.",
+          layout: "statement"
+        },
+        {
+          type: "image", title: "다음의 나에게",
+          src: "assets/lessons/lesson-11.webp",
+          alt: "목적과 흐름, 막힌 이유를 기록으로 남기는 사람과 AI 로봇",
+          caption: "목적 · 흐름 · 막힌 이유 세 가지만 남긴다.",
+          layout: "record",
+          marker: "RECORD · 03"
+        },
+        {
+          type: "image", title: "기록을 검토한다",
+          src: "assets/lessons/lesson-12.webp",
+          alt: "AI가 정리한 기록을 사람이 다시 대조해 검토하는 모습",
+          caption: "AI가 정리하고, 나는 실제와 맞는지 검토한다.",
+          layout: "review"
+        },
+        {
+          type: "quote", text: "기대와 실제의 차이로 범위를 먼저 좁힌다.", by: "문제를 좁힌다"
+        },
+        {
+          type: "bullets", title: "여기까지, 또 여섯 가지", subtitle: "맡긴 뒤 확인하고 남긴 것",
+          items: [
+            "검증할 때 세 기준을 나란히 놓는다.",
+            "결과를 읽기 전에 한 번 직접 움직여 본다.",
+            "“기대”와 “실제”를 한 줄씩 분리해 적는다.",
+            "“왜 이렇게 되는가?”를 한 번 더 묻는다.",
+            "세 문장으로 오늘의 흔적을 남긴다.",
+            "정리본에는 항상 실제와 대조하는 마지막 눈이 필요하다."
+          ]
+        },
+        {
+          type: "closing",
+          title: "AI는 손을 돕고, 방향은 내가 정한다",
+          teaser: "“AI가 일을 해주면, 나는 무엇을 맡아야 할까?” — 열두 가지를 지나오는 동안 답은 한 번도 바뀌지 않았습니다. 정리는 AI에게 맡기되, 실제와 맞는지 마지막으로 확인하는 사람은 나입니다."
+        }
       ]
     }
   ]
