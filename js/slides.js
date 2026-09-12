@@ -368,11 +368,33 @@
     closeZoom();
   });
 
+  // ---------- Presentation state reset ----------
+  // Deck을 나갈 때 DOM과 상태를 모두 비운다. #scene-slides는 비활성 시
+  // opacity:0·pointer-events:none이 되지만, 그 안의 개별 .slide.is-active는
+  // 자신의 pointer-events:auto를 따로 갖고 있어(css/style.css) 부모의 none을
+  // 상속받지 않는다 — stage.innerHTML을 지우지 않으면 이전 슬라이드가 화면에는
+  // 안 보여도 여전히 클릭을 가로챈다(Start 화면의 시작 버튼이 눌리지 않는 원인).
+  // current/activeSection/slides도 함께 비워, 다음 진입이 항상 첫 슬라이드부터
+  // 시작하는 상태에서 출발하게 한다.
+  function resetDeck() {
+    closeZoom();
+    current = 0;
+    activeSection = null;
+    accentIndex = null;
+    slides = [];
+    stage.innerHTML = "";
+    dotsEl.innerHTML = "";
+    counter.textContent = "";
+    progressFill.style.width = "0%";
+    clearTimeout(hideTimer);
+  }
+
   // Sprint 3: 나가기 목적지는 presentation.sectionNavigator(§09)에 따라 갈린다 —
   // "fan"이면 Section 허브(Fan)로, 그 외("none" 등)에는 Start로. slides.js는 이 설정값의
   // "의미"만 소비할 뿐, Card Fan을 직접 그리거나 켤지 말지 판단하지 않는다(§9 원칙).
   function exitToCards() {
     const nav = Deck.getPresentation().sectionNavigator;
+    resetDeck();
     App.Router.go(nav === "fan" ? "fan" : "start");
   }
 

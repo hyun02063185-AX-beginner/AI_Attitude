@@ -36,14 +36,14 @@ window.DECK = {
           layout: "feature"
         },
         {
-          type: "image", title: "먼저 그려야 할 지도",
+          type: "image", title: "지도부터 먼저 그립니다",
           src: "assets/lessons/lesson-02.webp",
           alt: "큰 지도 위에서 주요 경로를 함께 설계하는 사람과 AI 로봇",
           caption: "완벽한 설계보다 큰 흐름을 먼저 잡는다.",
           layout: "flow"
         },
         {
-          type: "image", title: "이해의 최소선",
+          type: "image", title: "어디까지 알면 될까",
           src: "assets/lessons/lesson-03.webp",
           alt: "하나의 경로가 여러 단계에서 다양한 방향으로 갈라지는 지도를 사람과 AI가 살펴보는 모습",
           caption: "무엇 · 순서 · 변화 지점을 설명할 수 있으면 된다.",
@@ -53,7 +53,7 @@ window.DECK = {
           type: "image", title: "이유를 적어둔다",
           src: "assets/lessons/lesson-04.webp",
           alt: "하나의 목적지를 향해 선택의 기준을 확인하는 사람과 AI 로봇",
-          caption: "목적은 모든 선택의 기준점이다.",
+          caption: "무엇을 위한 일인지 먼저 정합니다.",
           layout: "decision",
           marker: "DECISION · PURPOSE"
         },
@@ -61,7 +61,7 @@ window.DECK = {
           type: "image", title: "흐름을 말해본다",
           src: "assets/lessons/lesson-05.webp",
           alt: "예상한 경로와 실제 흐름을 나란히 비교하는 사람과 AI 로봇",
-          caption: "흐름은 결과가 맞는지 비교하는 기준이다.",
+          caption: "예상한 흐름과 실제 흐름을 나란히 비교해 봅니다.",
           layout: "flow-case"
         },
         {
@@ -72,7 +72,7 @@ window.DECK = {
           layout: "evidence"
         },
         {
-          type: "quote", text: "목적은 모든 선택의 기준점이다.", by: "이유를 적어둔다"
+          type: "quote", text: "이유를 알아야, 방향이 흔들리지 않는다.", by: "이유를 적어둔다"
         },
         {
           type: "bullets", title: "여기까지, 여섯 가지", subtitle: "맡기기 전에 세운 기준",
@@ -96,10 +96,10 @@ window.DECK = {
           subtitle: "검증과 원인 찾기, 그리고 이해 · 재질문 · 기록 · 검토"
         },
         {
-          type: "image", title: "세 개의 잣대",
+          type: "image", title: "세 가지로 확인한다",
           src: "assets/lessons/lesson-07.webp",
           alt: "세 가지 기준으로 하나의 결과를 함께 살펴보는 사람과 AI 로봇",
-          caption: "목적 · 흐름 · 완료 기준이 검증의 세 잣대다.",
+          caption: "목적 · 흐름 · 완료 기준, 이 세 가지를 나란히 놓고 봅니다.",
           layout: "evidence",
           marker: "EVIDENCE · 03"
         },
@@ -122,7 +122,7 @@ window.DECK = {
           type: "image", title: "답도 이해해야 한다",
           src: "assets/lessons/lesson-10.webp",
           alt: "질문을 거듭해 더 분명한 답에 다가가는 사람과 AI 로봇",
-          caption: "이해될 때까지 다시 묻는 것이 관리의 시작이다.",
+          caption: "이해될 때까지 다시 묻는 것이 관리의 시작입니다.",
           layout: "statement"
         },
         {
@@ -151,7 +151,7 @@ window.DECK = {
             "“기대”와 “실제”를 한 줄씩 분리해 적는다.",
             "“왜 이렇게 되는가?”를 한 번 더 묻는다.",
             "세 문장으로 오늘의 흔적을 남긴다.",
-            "정리본에는 항상 실제와 대조하는 마지막 눈이 필요하다."
+            "정리본은 항상 실제와 한 번 더 대조해 본다."
           ]
         },
         {
