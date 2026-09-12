@@ -72,6 +72,7 @@ body::before {
   transition: opacity .7s var(--ease), transform .7s var(--ease);
 }
 .scene.is-active { opacity: 1; transform: scale(1); pointer-events: auto; }
+.is-warping .scene { transition: none; transform: none; }
 
 /* ---------- Start ---------- */
 .start-inner { max-width: 640px; padding: 0 24px; text-align: center; }
@@ -98,11 +99,22 @@ body::before {
 .enter-btn__glow { position: absolute; inset: -40%; border-radius: 50%; background: radial-gradient(circle, rgba(233,168,90,.35), transparent 65%); z-index: -1; filter: blur(20px); }
 .start-note { margin-top: 30px; font-size: .85rem; color: var(--dim); letter-spacing: .04em; }
 
-/* ---------- Warp ---------- */
-.warp { position: fixed; inset: 0; z-index: 30; pointer-events: none; opacity: 0;
-  background: radial-gradient(circle at center, rgba(255,227,172,.92), rgba(233,168,90,.42) 10%, rgba(23,19,15,.985) 62%); }
-.warp--active { animation: warp .9s var(--ease) both; }
-@keyframes warp { 0% { opacity: 0; } 12% { opacity: 1; } 78% { opacity: 1; } 100% { opacity: 0; } }
+/* ---------- Warp (AX Entry Warp — MyPage Golden Transition과 동일한 geometry/timing) ---------- */
+.warp {
+  position: fixed; top: 50%; left: 50%;
+  width: 220vmax; height: 220vmax;
+  margin: -110vmax 0 0 -110vmax;
+  z-index: 30; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, var(--ink) 0%, var(--ink) 40%, var(--amber) 66%, var(--clay) 84%, transparent 100%);
+  opacity: 0; transform: scale(0); transform-origin: 50% 50%;
+}
+.warp--active { animation: warp 1600ms cubic-bezier(.45,0,.2,1) forwards; }
+@keyframes warp {
+  0% { opacity: 0; transform: scale(0); }
+  28% { opacity: 1; transform: scale(1); }
+  55% { opacity: 1; transform: scale(1.03); }
+  100% { opacity: 0; transform: scale(1.12); }
+}
 
 /* ---------- HUD: Floating, 낮은 무게 (DNA-04) ---------- */
 .slide-topbar {
